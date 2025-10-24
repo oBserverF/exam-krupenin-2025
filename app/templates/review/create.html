@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Отзыв{% endblock %}
+{% block content %}
+<h2>Написать отзыв для "{{ recipe.title }}"</h2>
+
+<form method="POST">
+  {{ form.hidden_tag() }}
+
+  <div class="mb-3">
+    {{ form.rating.label(class="form-label") }}
+    {{ form.rating(class="form-select") }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.text.label(class="form-label") }}
+    {{ form.text(class="form-control", rows=5) }}
+  </div>
+
+  <div class="mb-3">
+    {{ form.submit(class="btn btn-primary") }}
+    <a href="{{ url_for('recipe.view', recipe_id=recipe.id) }}" class="btn btn-secondary">Отмена</a>
+  </div>
+</form>
+{% endblock %}

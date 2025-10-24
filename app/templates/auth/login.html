@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Вход{% endblock %}
+{% block content %}
+<div class="container mt-4" style="max-width: 500px;">
+  <h2 class="mb-4">Вход в систему</h2>
+  <form method="POST">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+      {{ form.login.label(class="form-label") }}
+      {{ form.login(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      {{ form.password.label(class="form-label") }}
+      {{ form.password(class="form-control") }}
+    </div>
+    <div class="mb-3">
+      {{ form.submit(class="btn btn-primary") }}
+      <a href="{{ url_for('auth.register') }}" class="btn btn-link">Нет аккаунта? Регистрация</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

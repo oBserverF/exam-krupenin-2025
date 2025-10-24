@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}{{ recipe.title }}{% endblock %}
+{% block content %}
+<h2>{{ recipe.title }}</h2>
+<p>
+  Автор: {{ recipe.author.full_name() }}<br>
+  Время приготовления: {{ recipe.cook_time }} минут<br>
+  Порции: {{ recipe.portions }}<br>
+  Средняя оценка: {{ recipe.average_rating() or 'Нет' }}<br>
+  Всего отзывов: {{ recipe.reviews | length }}
+</p>
+
+<!-- Изображения -->
+<div class="row mb-3">
+  {% for image in recipe.images %}
+    <div class="col-md-4 mb-2">
+      <img src="{{ url_for('static', filename='images/' ~ image.filename) }}"
+           class="img-fluid rounded border" alt="Изображение рецепта">
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Описание -->
+<h4>Описание</h4>
+<div class="mb-3">{{ recipe.description | safe }}</div>
+
+<h4>Ингредиенты</h4>
+<div class="mb-3">{{ recipe.ingredients | safe }}</div>
+
+<h4>Шаги приготовления</h4>
+<div class="mb-3">{{ recipe.steps | safe }}</div>
+
+<!-- Отзывы -->
+<h3 class="mt-5">Отзывы</h3>
+{% for review in recipe.reviews %}
+  <div class="border rounded p-3 mb-3">
+    <strong>{{ review.user.full_name() }}</strong> оценил на <strong>{{ review.rating }}</strong>:
+    <div>{{ review.text | safe }}</div>
+    <small class="text-muted">{{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+  </div>
+{% else %}
+  <p>Отзывов пока нет.</p>
+{% endfor %}
+
+{% if current_user.is_authenticated %}
+  {% set reviewed = recipe.reviews | selectattr('user_id', 'equalto', current_user.id) | list %}
+  {% if not reviewed %}
+    <a href="{{ url_for('review.create', recipe_id=recipe.id) }}" class="btn btn-primary">Написать отзыв</a>
+  {% endif %}
+{% endif %}
+{% endblock %}

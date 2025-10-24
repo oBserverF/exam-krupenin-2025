@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Главная{% endblock %}
+{% block content %}
+<h2>Последние рецепты</h2>
+
+{% if current_user.is_authenticated %}
+  <div class="mb-3">
+    <a href="{{ url_for('recipe.create') }}" class="btn btn-success">Добавить рецепт</a>
+  </div>
+{% endif %}
+
+{% for recipe in recipes.items %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h4 class="card-title">{{ recipe.title }}</h4>
+      <p class="card-text">
+        ⏱ {{ recipe.cook_time }} мин | 🍽 {{ recipe.portions }} порций<br>
+        ⭐ Средняя оценка: {{ recipe.average_rating() or 'Нет' }} ({{ recipe.reviews | length }} отзывов)
+      </p>
+      <a href="{{ url_for('recipe.view', recipe_id=recipe.id) }}" class="btn btn-primary btn-sm">Просмотр</a>
+
+      {% if current_user.is_authenticated and (recipe.author_id == current_user.id or current_user.role.name == 'администратор') %}
+        <a href="{{ url_for('recipe.edit', recipe_id=recipe.id) }}" class="btn btn-warning btn-sm">Редактировать</a>
+        <a href="{{ url_for('recipe.delete', recipe_id=recipe.id) }}" class="btn btn-danger btn-sm"
+           onclick="return confirm('Вы уверены, что хотите удалить рецепт {{ recipe.title }}?')">Удалить</a>
+      {% endif %}
+    </div>
+  </div>
+{% else %}
+  <p>Пока рецептов нет.</p>
+{% endfor %}
+
+<!-- Пагинация -->
+<nav>
+  <ul class="pagination">
+    {% if recipes.has_prev %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('recipe.index', page=recipes.prev_num) }}">Назад</a>
+      </li>
+    {% endif %}
+    {% for p in recipes.iter_pages() %}
+      {% if p %}
+        <li class="page-item {% if p == recipes.page %}active{% endif %}">
+          <a class="page-link" href="{{ url_for('recipe.index', page=p) }}">{{ p }}</a>
+        </li>
+      {% else %}
+        <li class="page-item disabled"><span class="page-link">…</span></li>
+      {% endif %}
+    {% endfor %}
+    {% if recipes.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="{{ url_for('recipe.index', page=recipes.next_num) }}">Вперёд</a>
+      </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endblock %}
