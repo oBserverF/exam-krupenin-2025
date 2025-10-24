@@ -13,5 +13,4 @@ class Config:
 
 class ProductionConfig(Config):
     DEBUG = False
-    # Для продакшена рекомендуется использовать PostgreSQL
     # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'postgresql://user:password@localhost/cookbook'
